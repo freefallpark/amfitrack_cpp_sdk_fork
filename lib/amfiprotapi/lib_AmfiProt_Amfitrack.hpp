@@ -30,7 +30,9 @@
 #include <cmsis_compiler.h>
 #endif
 
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <chrono>
+#endif
 
 /// \endcond
 
@@ -422,7 +424,6 @@ public:
     lib_AmfiProt_AmfiTrack();
     ~lib_AmfiProt_AmfiTrack();
 
-    void lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
     void lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle);
     void lib_AmfiProt_Amfitrack_SendSourceCoilCalData(lib_AmfiProt_Amfitrack_SourceCoilCalData_t* data);
 
@@ -455,7 +456,6 @@ public:
 
     virtual void lib_AmfiProt_Amfitrack_handle_SourceCalibration(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
-    virtual void lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) {};
     virtual void lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) {};
     virtual void lib_AmfiProt_Amfitrack_handle_RawBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_NormalizedBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
@@ -467,7 +467,10 @@ public:
     virtual void lib_AmfiProt_Amfitrack_handle_SetPhaseModulation(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_SourceCoilCalData(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
-
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
+    void lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
+    virtual void lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) {};
+#endif
 };
 
 

@@ -67,7 +67,7 @@ lib_AmfiProt_AmfiTrack::~lib_AmfiProt_AmfiTrack()
 
 }
 
-
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle)
 {
     //Only partially implemented
@@ -83,6 +83,7 @@ void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, l
     break;
     }
 }
+#endif
 
 void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame,void* routing_handle)
 {

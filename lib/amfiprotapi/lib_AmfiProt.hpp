@@ -12,7 +12,10 @@
 #include <iostream>
 #include <assert.h>
 #include <stdio.h>
+
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <chrono>
+#endif
 
 #ifdef _MSC_VER
 #define __PACKED_STRUCT struct 
@@ -215,7 +218,6 @@ public:
     uint8_t lib_AmfiProt_FrameSize(lib_AmfiProt_Frame_t const* frame);
     void lib_AmfiProt_SetDeviceID(uint8_t deviceID);
 
-    void lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
     void lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle);
 
     virtual void libAmfiProt_handle_RequestProcedureSpec(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
@@ -254,7 +256,6 @@ public:
     virtual void libAmfiProt_handle_DebugOutput(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_ResetParameter(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_RequestFirmwareVersionPerID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
-    virtual void libAmfiProt_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
 
     virtual void libAmfiProt_ReplyInvalid(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
@@ -264,6 +265,11 @@ public:
     virtual void libAmfiProt_handle_ReplyNotImplemented(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_ReplyFailure(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_ReplyInvalidRequest(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
+
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
+    void lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
+    virtual void libAmfiProt_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) = 0;
+#endif
 private:
     uint8_t deviceID;
 };

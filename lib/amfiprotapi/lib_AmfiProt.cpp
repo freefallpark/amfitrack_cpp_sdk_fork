@@ -32,8 +32,6 @@ extern "C"
 }
 #endif
 
-#include <iostream>
-#include <chrono>
 
 
 //-----------------------------------------------------------------------------
@@ -218,12 +216,6 @@ bool lib_AmfiProt::lib_AmfiProt_Init(lib_AmfiProt_Handle_t* handle, uint8_t devi
     lib_AmfiProt_SetDeviceID(deviceID);
 
     return true;
-}
-
-void lib_AmfiProt::lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle)
-{
-    //ONLY partiacially implemented
-    this->libAmfiProt_handle_AlternativeProcessing(handle, frame, time_stamp, routing_handle);
 }
 
 void lib_AmfiProt::lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
@@ -744,3 +736,13 @@ void lib_AmfiProt::lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t*
     }
     //	printf("Received frame with payloadType: %u\r\n", frame->header.payloadType);
 }
+
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
+#include <iostream>
+#include <chrono>
+void lib_AmfiProt::lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle)
+{
+    //ONLY partiacially implemented
+    this->libAmfiProt_handle_AlternativeProcessing(handle, frame, time_stamp, routing_handle);
+}
+#endif
