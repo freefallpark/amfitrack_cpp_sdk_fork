@@ -68,7 +68,23 @@ lib_AmfiProt_AmfiTrack::~lib_AmfiProt_AmfiTrack()
 }
 
 
-void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
+void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle)
+{
+    //Only partially implemented
+    switch (frame->header.payloadType)
+    {
+    case lib_AmfiProt_Amfitrack_PayloadType_Sensor_Measurement:
+    {
+        if (frame->header.length == sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t))
+        {
+            lib_AmfiProt_Amfitrack_handle_SensorMeasurement(handle, frame, time_stamp, routing_handle);
+        }
+    }
+    break;
+    }
+}
+
+void lib_AmfiProt_AmfiTrack::lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame,void* routing_handle)
 {
     switch (frame->header.payloadType)
     {

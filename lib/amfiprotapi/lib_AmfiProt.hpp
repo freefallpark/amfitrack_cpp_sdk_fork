@@ -12,6 +12,7 @@
 #include <iostream>
 #include <assert.h>
 #include <stdio.h>
+#include <chrono>
 
 #ifdef _MSC_VER
 #define __PACKED_STRUCT struct 
@@ -214,6 +215,7 @@ public:
     uint8_t lib_AmfiProt_FrameSize(lib_AmfiProt_Frame_t const* frame);
     void lib_AmfiProt_SetDeviceID(uint8_t deviceID);
 
+    void lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
     void lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle);
 
     virtual void libAmfiProt_handle_RequestProcedureSpec(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
@@ -252,6 +254,7 @@ public:
     virtual void libAmfiProt_handle_DebugOutput(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_ResetParameter(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_RequestFirmwareVersionPerID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
+    virtual void libAmfiProt_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) = 0;
     virtual void libAmfiProt_handle_AlternativeProcessing(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
 
     virtual void libAmfiProt_ReplyInvalid(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;

@@ -29,6 +29,9 @@
 #ifndef __PACKED_STRUCT
 #include <cmsis_compiler.h>
 #endif
+
+#include <chrono>
+
 /// \endcond
 
 //-----------------------------------------------------------------------------
@@ -242,6 +245,7 @@ typedef __PACKED_STRUCT
 
     /** Frame ID */
     lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
+
 } lib_AmfiProt_Amfitrack_Sensor_Measurement_t;
 // static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_Measurement_t larger than max payload size");
 
@@ -418,6 +422,7 @@ public:
     lib_AmfiProt_AmfiTrack();
     ~lib_AmfiProt_AmfiTrack();
 
+    void lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle);
     void lib_AmfiProt_Amfitrack_processFrame(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle);
     void lib_AmfiProt_Amfitrack_SendSourceCoilCalData(lib_AmfiProt_Amfitrack_SourceCoilCalData_t* data);
 
@@ -450,6 +455,7 @@ public:
 
     virtual void lib_AmfiProt_Amfitrack_handle_SourceCalibration(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
+    virtual void lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle) {};
     virtual void lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) {};
     virtual void lib_AmfiProt_Amfitrack_handle_RawBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;
     virtual void lib_AmfiProt_Amfitrack_handle_NormalizedBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle) = 0;

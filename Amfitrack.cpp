@@ -12,6 +12,17 @@
 
 static bool stop_running = false;
 
+std::chrono::steady_clock::time_point getTimestampMicroseconds()
+{
+    std::chrono::steady_clock::time_point time;
+    #if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
+        time = std::chrono::steady_clock::now();
+    #else
+        // Unknown OS
+    #endif
+    return time;
+}
+
 AMFITRACK::AMFITRACK()
 {
     // Initialize Name with null characters
@@ -216,6 +227,17 @@ void AMFITRACK::getSensorMeasurements(uint8_t DeviceID, lib_AmfiProt_Amfitrack_S
     memcpy(SensorMeasurement, &SensorMeasurements[DeviceID], sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
 }
 
+void AMFITRACK::setSensorTimestamp(uint8_t DeviceID, std::chrono::steady_clock::time_point time_stamp)
+{
+    memcpy(&SensorTimestamps[DeviceID], &time_stamp, sizeof(std::chrono::steady_clock::time_point));
+}
+
+void AMFITRACK::getSensorTimestamp(uint8_t DeviceID, std::chrono::steady_clock::time_point* time_stamp)
+{
+    if (!getDeviceActive(DeviceID)) return;
+    memcpy(time_stamp, &SensorTimestamps[DeviceID], sizeof(std::chrono::steady_clock::time_point));
+}
+
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceCalibration(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
@@ -228,10 +250,17 @@ void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle,
     AMFITRACK.setDeviceActive(frame->header.source);
 }
 
-void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
+void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, std::chrono::steady_clock::time_point time_stamp, void* routing_handle)
 {
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
+    AMFITRACK.setSensorTimestamp(frame->header.source, time_stamp);
+    AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(handle, frame, routing_handle);
+}
+
+void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
+{
     lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurement;
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
     memcpy(&SensorMeasurement, &frame->payload[0], sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
     lib_AmfiProt_Amfitrack_Pose_t tempPose;
     lib_AmfiProt_Amfitrack_decode_pose_i24(&SensorMeasurement.pose, &tempPose);

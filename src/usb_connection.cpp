@@ -438,7 +438,8 @@ void usb_connection::usb_run(void)
         if (this->read_timeout(node->getDeviceHandle(), rx_frame.data, USB_REPORT_LENGTH, 1) >= 0)
 #endif
         {
-            _amfiprot_api.deserialize_frame(rx_frame.data, USB_REPORT_LENGTH - 2);
+            std::chrono::high_resolution_clock::time_point time_stamp = std::chrono::steady_clock::now();
+            _amfiprot_api.deserialize_frame(rx_frame.data, USB_REPORT_LENGTH - 2, time_stamp);
         }
     }
 }
